@@ -1,0 +1,69 @@
+% === Codifica e Lingua ===
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+
+% === Layout e Impaginazione ===
+\usepackage{geometry}
+\geometry{hmargin=2cm, vmargin=2cm}  % Margini del documento
+\usepackage{parskip}  % Rimuove l'indentazione nei paragrafi
+
+% === Grafica ===
+\usepackage{graphicx}   % Gestione delle immagini
+\usepackage{caption}    % Per le didascalie personalizzate
+\usepackage{subcaption} % Immagini multiple
+\usepackage{float}      % Per migliorare il posizionamento delle immagini
+\usepackage{tabularx}   % Tabelle che si adattano alla larghezza della pagina
+
+% === Matematica ===
+\usepackage{amsmath, amssymb, amsthm}  % Simboli matematici
+
+% === Codice Sorgente ===
+\usepackage{listings}   % Per il codice sorgente
+\usepackage{xcolor}     % Per i colori nel codice
+\input{preambolo/stili_codice.tex}  % Caricamento degli stili di codice separati
+\usepackage{pgffor}
+
+
+
+% === Link e Riferimenti ===
+\usepackage{hyperref}   % Per i link cliccabili
+\usepackage{cleveref}   % Per riferimenti automatici (crea etichette più intuitive)
+
+% === Personalizzazione ===
+\newcommand{\titolo}{SOUND DESIGN}
+\newcommand{\autore}{Alessandro Ripani}
+\newcommand{\datadoc}{\today}
+
+
+
+% === Comandi per codice ===
+\newcommand{\codecpp}[1]{\lstinputlisting[style=customcpp]{#1}}
+\newcommand{\codepy}[1]{\lstinputlisting[style=custompython]{#1}}
+
+% === Stili di Codice ===
+\lstdefinestyle{customcpp}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4
+}
+
+\lstdefinestyle{custompython}{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    frame=single,
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    tabsize=4
+}

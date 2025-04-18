@@ -1,0 +1,146 @@
+
+\chapter{Sistemi LTI con funzione di trasferimento razionale}
+
+La funzione di trasferimento di un sistema LTI è data da:
+
+\[
+H(z) = \frac{B(z)}{A(z)}
+\]
+
+\subsection*{Risposta in frequenza}
+
+La risposta in frequenza di un filtro è:
+
+\[
+H(e^{j\omega}) = |H(e^{j\omega})| e^{j\phi(\omega)}
+\]
+
+\subsection*{Ritardo di gruppo}
+
+Il ritardo di gruppo è dato da:
+
+\[
+\tau(\omega) = -\frac{d\phi(\omega)}{d\omega}
+\]
+
+\section{Classificazione dei Filtri Digitali}
+
+\subsection*{Filtri a Coefficienti Reali}
+
+- La risposta in frequenza \( H(e^{j\omega}) \) è \textbf{pari}, la fase \( \phi(\omega) \) è \textbf{dispari}.
+
+\subsubsection*{Esempio}
+
+Un esempio di filtro con coefficienti reali è dato da:
+
+\[
+H(z) = 1 - a z^{-1}
+\]
+
+\subsection*{Filtri a Fase Lineare}
+
+La risposta in frequenza di un filtro a fase lineare è:
+
+\[
+H(e^{j\omega}) = c e^{-jK\omega} H_R(\omega)
+\]
+
+dove la fase è lineare.
+
+\subsubsection*{Tipi di Filtri a Fase Lineare}
+
+- \textbf{Simmetrico}: fase lineare.
+- \textbf{Antisimmetrico}: non adatto a filtri passa-basso o passa-alto.
+
+\section{Specifiche di Progetto}
+
+\subsection*{Banda Passante}
+
+La banda passante è definita come:
+
+\[
+0 \leq \omega \leq \omega_p
+\]
+
+\subsection*{Banda Oscura}
+
+La banda oscura è definita come:
+
+\[
+\omega_s \leq \omega \leq \pi
+\]
+
+\subsection*{Zona di Transizione}
+
+La zona di transizione è compresa tra:
+
+\[
+\omega_s \quad \text{e} \quad \omega_p
+\]
+
+\subsection*{Ampiezza Normalizzata}
+
+L'ampiezza normalizzata è data dalla divisione per:
+
+\[
+(1 + \delta_1)
+\]
+
+\section{Progetto di Filtri FIR}
+
+\subsection*{Scelta tra FIR e IIR}
+
+- I filtri FIR hanno fase lineare ma un costo computazionale maggiore.
+- I filtri IIR sono più efficienti in termini di ordine, ma hanno fase non lineare.
+
+\subsection*{Metodi di Progettazione FIR}
+
+1. \textbf{Windowing}: semplice, ma non ottimizzato.
+2. \textbf{Least Square}: minimizza l'errore in frequenza.
+3. \textbf{Equiripple}: distribuisce uniformemente l'errore.
+
+\subsubsection*{Metodo Windowing}
+
+Il metodo di windowing prevede il troncamento della risposta impulsiva con una finestra:
+
+- Rettangolare (troncamento semplice).
+- Hamming, Blackman, Kaiser (miglior controllo).
+- \textbf{Fenomeno di Gibbs}: ripple nella banda passante.
+
+\subsubsection*{Metodo Eigenfilter}
+
+Il metodo eigenfilter minimizza l'errore in banda passante e oscura utilizzando gli autovettori di una matrice.
+
+\subsubsection*{Metodo Equiripple}
+
+L'algoritmo di Parks-McClellan è utilizzato per minimizzare il massimo errore.
+
+\section{Progetto di Filtri IIR}
+
+\subsection*{Trasformazione Bilineare}
+
+1. Progettare il filtro analogico \( H_a(s) \).
+2. Applicare la trasformazione bilineare:
+
+\[
+s = \frac{1 - z^{-1}}{1 + z^{-1}}
+\]
+
+3. Ottenere il filtro digitale \( H(z) \).
+
+\subsection*{Tipologie di Filtri IIR}
+
+1. \textbf{Butterworth}: risposta piatta, transizione lenta.
+2. \textbf{Chebyshev I}: banda passante equiripple, banda oscura monotona.
+3. \textbf{Chebyshev II}: banda passante monotona, banda oscura equiripple.
+4. \textbf{Ellittico}: equiripple in entrambe le bande, transizione più veloce.
+
+\section{Filtri Passa-Tutto}
+
+I filtri passa-tutto mantengono il modulo costante e modificano solo la fase.
+
+\subsection*{Proprietà dei Filtri Passa-Tutto}
+
+- Coppie coniugate reciproche di poli e zeri.
+- L'energia di uscita è uguale all'energia di ingresso.
+

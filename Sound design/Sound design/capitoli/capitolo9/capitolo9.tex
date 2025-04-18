@@ -1,0 +1,43 @@
+\chapter{Sintesi}
+\section{Track Chunk nei file MIDI}
+
+\subsection*{Sintassi:}
+\begin{verbatim}
+MTrk <lunghezza> <stream>
+\end{verbatim}
+
+\begin{itemize}
+    \item \texttt{MTrk} → Indica l'inizio della traccia
+    \item \texttt{<lunghezza>} → Dimensione della traccia in byte
+    \item \texttt{<stream>} → Contiene eventi MIDI, Sysex o Meta-Eventi
+\end{itemize}
+
+\section{Eventi MIDI in una traccia}
+
+\subsection*{Formato:}
+\begin{verbatim}
+<delta> <messaggio MIDI>
+\end{verbatim}
+
+\begin{itemize}
+    \item \texttt{<delta>} → Tempo trascorso dall'ultimo evento
+    \item \texttt{<messaggio MIDI>} → Evento MIDI standard (Note On, Note Off, CC, ecc.)
+\end{itemize}
+
+\section{Meta-Eventi MIDI}
+
+\subsection*{Formato generale:}
+\begin{verbatim}
+FF <tipo> <lunghezza> <dati>
+\end{verbatim}
+
+\textbf{Esempi di Meta-Eventi:}
+\begin{itemize}
+    \item \textbf{Copyright:} \texttt{FF 02 <length> <text>}
+    \item \textbf{Nome traccia:} \texttt{FF 03 <length> <text>}
+    \item \textbf{Nome strumento:} \texttt{FF 04 <length> <text>}
+    \item \textbf{Testo brano:} \texttt{FF 05 <length> <text>}
+    \item \textbf{Fine brano (obbligatorio):} \texttt{FF 2F 00}
+\end{itemize}
+
+

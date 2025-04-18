@@ -1,0 +1,686 @@
+\chapter{DFT e FFT}
+\section*{Sequenze Periodiche}
+
+Un \textbf{evento periodico} è un evento che si ripete uguale a se stesso ad ogni intervallo \( N \).
+
+\begin{itemize}
+    \item \(\omega_0 = \frac{2\pi}{N}\) è la \textit{pulsazione}.
+    \item Non è né quadraticamente né assolutamente sommabile.
+    \item È una convoluzione di un periodo con un treno di impulsi di periodo \( N \).
+    \item Può essere rappresentato dalla serie discreta di Fourier (DFS).
+\end{itemize}
+
+\textbf{Fattore di Twiddle}: \( W_N^{-kn} \).
+
+\section*{Proprietà della DFS}
+
+\subsection*{Linearità}
+\[
+\sum_{k=0}^{N-1} c_1 X_1[k] + c_2 X_2[k] W_N^{-kn} = c_1 \sum_{k=0}^{N-1} X_1[k] W_N^{-kn} + c_2 \sum_{k=0}^{N-1} X_2[k] W_N^{-kn}
+\]
+
+\subsection*{Dualità}
+La DFS di una sequenza periodica è anch'essa periodica.
+
+\subsection*{Traslazione nel Tempo}
+\[
+x[n - m] \leftrightarrow X(e^{j\omega}) e^{-j\omega m}
+\]
+
+\subsection*{Traslazione in Frequenza}
+\[
+x[n] \leftrightarrow X(e^{j(\omega + \Delta \omega)}) 
+\]
+
+\subsection*{Simmetria}
+\[
+X(e^{-j\omega}) = X^*(e^{j\omega})
+\]
+
+\section*{Relazione tra DTFT e DFS}
+
+Eseguire la DFS corrisponde a valutare \( X(z) \) su \( N \) punti equispaziati sul cerchio unitario.
+
+La DTFT di una sequenza periodica è il prodotto delle trasformate di Fourier del singolo periodo e del treno di impulsi:
+
+\[
+X(e^{j\omega}) = \sum_{n=-\infty}^{+\infty} x[n] e^{-j\omega n}
+\]
+
+\section*{Sequenze Periodiche di Durata Finita}
+
+\begin{itemize}
+    \item Una \textbf{sequenza periodica} è completamente rappresentata dalla sua \textbf{sequenza DFS}.
+    \item Una sequenza \textbf{aperiodica} di lunghezza \( N \) può essere resa \textbf{periodica} replicandola sull'asse \( n \).
+    \item La DFS di una sequenza corrisponde alla DTFT campionata \( N \) in frequenze equispaziate.
+\end{itemize}
+
+\[
+x[n] \leftrightarrow X(e^{j\omega}) \quad \text{con} \quad \omega = \frac{2\pi}{N}k \quad \text{per} \quad n=0, \dots, N-1, \quad k=0, \dots, N-1.
+\]
+
+\section*{Campionamento in Frequenza}
+
+\textbf{Obiettivo}: Determinare le condizioni in cui la conoscenza di campioni equispaziati di \( X(e^{j\omega}) \) permette la ricostruzione univoca della sequenza \( x[n] \).
+
+\subsection*{Principali Trasformate}
+
+\begin{itemize}
+    \item \textbf{DTFT} (Trasformata Discreta di Fourier Continua):
+    \[
+    X(e^{j\omega}) = \sum_{n=-\infty}^{+\infty} x[n] e^{-j\omega n}
+    \]
+    
+    \item \textbf{Campionamento della DTFT in N punti}:
+    \[
+    \bar{X}[k] = X(e^{j \frac{2\pi}{N} k})
+    \]
+
+    \item \textbf{DFS inversa} (per una sequenza periodica di periodo \( N \)):
+    \[
+    \bar{x}[n] = \frac{1}{N} \sum_{k=0}^{N-1} \bar{X}[k] W_N^{-kn}
+    \]
+\end{itemize}
+
+\section*{Campionamento in Frequenza e Convoluzione}
+
+Sostituendo la DTFT, otteniamo:
+
+\[
+\bar{x}[n] = \frac{1}{N} \sum_{m=-\infty}^{+\infty} x[m] \left( \sum_{k=0}^{N-1} W_N^{-k(n-m)} \right)
+\]
+
+Si dimostra che:
+
+\[
+\sum_{k=0}^{N-1} W_N^{-k(n-m)} = \sum_{r=-\infty}^{+\infty} \delta[n - m + rN]
+\]
+
+Quindi:
+
+\[
+\bar{x}[n] = x[n] * \sum_{r=-\infty}^{+\infty} \delta[n + rN]
+\]
+
+\textbf{Conclusione}: Il campionamento in frequenza della DTFT è equivalente a replicare periodicamente la sequenza nel dominio temporale.
+
+\section{Condizioni per la ricostruzione univoca}
+
+Definiamo:
+
+\[
+\tilde{y}[n] = \sum_{r=-\infty}^{+\infty} \delta[n + rN]
+\]
+
+La sua \textbf{trasformata discreta} è:
+
+\[
+\tilde{Y}[k] = \sum_{n=0}^{N-1} \delta[n] e^{-j \left( \frac{2\pi}{N} \right) k n} = 1 \quad \text{per} \quad k = 0, \dots, N-1
+\]
+
+Invertendo la DFS (Trasformata di Fourier Discreta):
+
+\[
+\tilde{y}[n] = \frac{1}{N} \sum_{k=0}^{N-1} 1 \cdot W_N^{-kn} = \sum_{r=-\infty}^{+\infty} \delta[n + rN]
+\]
+
+\textbf{Conclusione:}
+
+Il \textbf{campionamento in frequenza} della DTFT implica che la sequenza venga \textbf{replicata periodicamente} nel dominio temporale.
+
+Se la sequenza originale è limitata a \(N\) campioni, la sua conoscenza in \(N\) punti equispaziati della DTFT è sufficiente per la ricostruzione univoca.
+
+
+\section*{Aliasing nel Tempo}
+
+Campionare \( X(e^{j\omega}) \) in \( N \) punti equispaziati sul cerchio unitario equivale ad avere la DFS di una sequenza periodica di periodo \( N \). Questa sequenza periodica si ottiene facendo la convoluzione di \( x[n] \) con un treno di impulsi spaziati di \( N \).
+
+\[
+\bar{x}[n] = x[n] * \sum_{r=-\infty}^{+\infty} \delta[n + rN]
+\]
+
+\textbf{1° Caso}: Se \( x[n] \) ha durata finita \( \leq N \), può essere ricostruita perfettamente dai suoi \( N \) campioni.
+
+\textbf{2° Caso}: Se \( x[n] \) ha durata maggiore di \( N \), si verifica aliasing temporale.
+
+\section*{Trasformata Discreta di Fourier (DFT)}
+
+Una sequenza aperiodica \( x[n] \) di lunghezza \( N \) può essere completamente rappresentata da \( N \) campioni della sua DTFT. La DFT di una sequenza finita di lunghezza \( N \) è anch'essa di lunghezza \( N \).
+
+\textbf{DFT Diretta}:
+
+\[
+X[k] = \sum_{n=0}^{N-1} x[n] W_N^{kn}
+\]
+
+\textbf{DFT Inversa}:
+
+\[
+x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] W_N^{-kn}
+\]
+
+\section{Zero Padding}
+
+\textbf{Obiettivo}: Aumentare la lunghezza della DFT senza alterarne il contenuto informativo.
+
+\subsection{Relazione tra DFT e DTFT}
+La \textbf{DFT} di \( x[n] \) è ottenuta campionando la \textbf{DTFT} di \( x[n] \) nei punti:
+
+\[
+X[k] = \sum_{n=0}^{N-1} x[n] e^{-j \frac{2\pi}{N} k n}
+\]
+
+Per \textbf{ricostruire perfettamente} \( x[n] \), servono \textbf{almeno N campioni} della DTFT per evitare aliasing temporale.
+
+\subsection{Effetto dello Zero Padding}
+Si \textbf{aumenta la lunghezza della DFT} a \( M > N \) (maggiore risoluzione in frequenza).
+Questo si ottiene \textbf{aggiungendo} \( M - N \) zeri alla fine di \( x[n] \):
+
+\[
+x_{padded}[n] = \begin{cases}
+x[n] & \text{per} \quad 0 \leq n \leq N-1 \\
+0 & \text{per} \quad N \leq n \leq M-1
+\end{cases}
+\]
+
+La \textbf{DFT non cambia}, ma si ottengono \textbf{più campioni della DTFT}, quindi una \textbf{migliore interpolazione} della risposta in frequenza.
+
+\subsection{Effetti dello Zero Padding}
+\begin{itemize}
+    \item Aumenta la \textbf{risoluzione in frequenza} (più punti disponibili)
+    \item \textbf{Non altera il contenuto in frequenza} (non aggiunge nuove informazioni)
+    \item Utile per \textbf{visualizzare meglio} la trasformata
+\end{itemize}
+
+
+\section{Convoluzione di Sequenze Periodiche}
+
+Se \( \tilde{x}_1[n] \) e \( \tilde{x}_2[n] \) sono \textbf{sequenze periodiche di periodo N}, allora:
+
+\subsection{Convoluzione Periodica (Proprietà Commutativa)}
+\[
+y[n] = \sum_{m=0}^{N-1} \tilde{x}_1[m] \cdot \tilde{x}_2[n-m \, (\text{mod} \, N)]
+\]
+
+\subsection{Relazione con la DFS}
+\[
+\tilde{X}_1[n] \cdot \tilde{X}_2[n] = \mathcal{DFT}\left\{ \tilde{x}_1[n] \cdot \tilde{x}_2[n] \right\}
+\]
+
+\subsection{Moltiplicazione punto a punto nel dominio del tempo}
+La moltiplicazione punto a punto nel dominio del tempo equivale a una convoluzione nel dominio della DFS:
+\[
+    \tilde{X}_1[n] \cdot \tilde{X}_2[n] = \sum_{m=0}^{N-1} \tilde{x}_1[m] \cdot \tilde{x}_2[n - m \, (\text{mod} \, N)]
+\]
+
+\subsection{Convoluzione Circolare}
+\textbf{Definizione}: Identica alla convoluzione periodica, ma gli indici sono considerati \textbf{modulo N}.
+
+Per due sequenze finite di lunghezza \( N \):
+\[
+    X_1[n] \cdot X_2[n] = \sum_{m=0}^{N-1} x_1[m] \cdot x_2[(n - m) \, (\text{mod} \, N)]
+\]
+
+\subsection{Relazione con la DFT}
+\[
+    X_1[n] \cdot X_2[n]= X_1[k] \cdot X_2[k]
+\]
+
+\subsection{Moltiplicazione punto a punto nel tempo}
+\[
+    X_1[n] \cdot X_2[n] = \sum_{m=0}^{N-1} x_1[m] \cdot x_2[(n - m) \, (\text{mod} \, N)]
+\]
+
+\section{Rapporto tra Convoluzione Aperiodica e Circolare}
+
+\subsection*{Caso 1: Sequenze finite di lunghezza \( N \)}
+\[
+\begin{array}{|c|c|}
+\hline
+\textbf{Aperiodica} & \textbf{Circolare} \\
+\hline
+x_1[n] * x_2[n] = \sum_{m=0}^{N-1} x_1[m] \cdot x_2[n-m] & x_1[n] * x_2[n] = \sum_{m=0}^{N-1} x_1[m] \cdot x_2[(n - m) \, (\text{mod} \, N)] \\
+\hline
+\text{DTFT: } X_1(e^{j\omega}) \cdot X_2(e^{j\omega}) & \text{DFT: } X_1[k] \cdot X_2[k] \\
+\hline
+\text{Risultato: sequenza aperiodica di lunghezza } 2N-1 & \text{Risultato: sequenza periodica di lunghezza N} \\
+\hline
+\text{Non coincidono in generale} & \\
+\hline
+\end{array}
+\]
+
+\subsection*{Caso 2: Sequenze di lunghezza diversa}
+\begin{itemize}
+    \item \textbf{Sequenza aperiodica di lunghezza L}
+    \item \textbf{Sequenza aperiodica di lunghezza P < L}
+\end{itemize}
+\[
+\begin{array}{|c|c|}
+\hline
+\textbf{Aperiodica} & \textbf{Circolare} \\
+\hline
+x_1[n] * x_2[n] = \sum_{m=0}^{L-1} x_1[m] \cdot x_2[n-m] & x_1[n] * x_2'[n] = \sum_{m=0}^{L-1} x_1[m] \cdot x_2'[(n - m) \, (\text{mod} \, L)] \\
+\hline
+\text{Risultato: sequenza aperiodica di lunghezza } L + P - 1 & \text{Risultato: sequenza circolare di lunghezza L} \\
+\hline
+& x_2'[n] \text{ è } x_2[n] \text{ con zero-padding fino a } L-1 \\
+\hline
+\end{array}
+\]
+
+\section{Implementazione della Convoluzione Circolare}
+\begin{enumerate}
+    \item Si \textbf{forma la sequenza}.
+    \item Si \textbf{trasla circolarmente}.
+    \item Si \textbf{moltiplica punto a punto}.
+\end{enumerate}
+
+\section{Costo Computazionale}
+
+Per una sequenza di lunghezza \( N \):
+
+\begin{itemize}
+    \item \textbf{Moltiplicazioni complesse} \( \Rightarrow N^2 \) (equivalente a \( 4N^2 \) operazioni reali)
+    \item \textbf{Sommatorie complesse} \( \Rightarrow N(N-1) \) (equivalente a \( N(4N - 2) \) operazioni reali)
+\end{itemize}
+
+\textbf{Riduzione del costo computazionale}
+
+\begin{itemize}
+    \item \textbf{Algoritmi ottimizzati} per il calcolo della DFT a costo inferiore a \( O(N^2) \)
+    \item \textbf{Esempio}: Fast Fourier Transform (FFT)
+\end{itemize}
+
+
+\section{Fast Fourier Transform (FFT)}
+
+L'FFT sfrutta proprietà matematiche per ridurre il numero di operazioni necessarie:
+
+\subsection{Formula della DFT}
+\[
+X[k] = \sum_{n=0}^{N-1} x[n] \cdot e^{-j \frac{2\pi}{N} k n}
+\]
+
+Per ogni campione della DFT:
+\begin{itemize}
+    \item \textbf{Moltiplicazioni complesse}: \( N \)
+    \item \textbf{Somme complesse}: \( N-1 \)
+\end{itemize}
+
+Per calcolare \( N \) campioni:
+\begin{itemize}
+    \item Complessità totale: \( O(N^2) \) \quad \text{(ALTA!)}
+\end{itemize}
+
+\subsection{\texorpdfstring{Ottimizzazioni basate sulle Proprietà di \( W_N \)}{Ottimizzazioni basate sulle Proprietà di W\_N}}
+
+
+\begin{itemize}
+    \item \textbf{Simmetria}
+    \item \textbf{Periodicità}
+\end{itemize}
+
+\section{Radix-2 Decimation In Time (DIT) FFT}
+
+\textbf{Idea (Cooley-Tukey 1965)}
+
+\begin{itemize}
+    \item Si suddivide la sequenza \( x[n] \) in due sottosequenze di lunghezza \( N/2 \):
+    \begin{itemize}
+        \item Campioni \textbf{con indice pari}
+        \item Campioni \textbf{con indice dispari}
+    \end{itemize}
+    \item Si calcola la \textbf{DFT totale} componendo opportunamente le \textbf{DFT delle sottosequenze}.
+\end{itemize}
+
+\textbf{Scomposizione della DFT}
+
+\[
+X[k] = \sum_{m=0}^{N/2-1} x[2m] W_{N/2}^{km} + W_N^k \sum_{m=0}^{N/2-1} x[2m+1] W_{N/2}^{km}
+\]
+
+La DFT a \( N \) punti si scompone in due DFT a \( N/2 \) punti più combinazioni di dati.
+
+\textbf{Algoritmo Iterativo}
+
+\begin{itemize}
+    \item Se \( N \) è una potenza di 2, l'algoritmo si applica ricorsivamente fino alla DFT di 2 punti.
+    \item \textbf{Numero di stadi}: \( M = \log_2(N) \)
+    \item \textbf{Numero totale di "butterfly" per stadio}: \( N/2 \)
+\end{itemize}
+
+\textbf{Esempio per \( N=8 \):}
+
+\[
+N = 2^3 \Rightarrow 3 \text{ stadi}: \quad \text{DFT 8 punti} \rightarrow \text{DFT 4 punti} \rightarrow \text{DFT 2 punti}
+\]
+\section*{Varianti dell'algoritmo DIT}
+
+\begin{enumerate}
+    \item \textbf{DIT Canonica}
+    \begin{itemize}
+        \item Ingresso: \textbf{bit-reversed order}
+        \item Uscita: \textbf{ordine normale}
+        \item \textbf{"In-place"}
+    \end{itemize}
+    \item \textbf{DIT Alternativa}
+    \begin{itemize}
+        \item Ingresso: \textbf{ordine normale}
+        \item Uscita: \textbf{bit-reversed order}
+        \item \textbf{"In-place"}
+    \end{itemize}
+    \item \textbf{DIT Sequenziale}
+    \begin{itemize}
+        \item Indici normali in ogni stadio
+        \item Non \textbf{in-place} (più complesso)
+    \end{itemize}
+\end{enumerate}
+
+\section*{Radix-2 Decimation In Frequency (DIF) FFT}
+
+\textbf{Idea:}
+
+La sequenza in ingresso viene divisa in due sottosequenze:
+\begin{itemize}
+    \item Campioni con indice pari
+    \item Campioni con indice dispari
+\end{itemize}
+
+Si calcolano separatamente e poi si combinano in uscita.
+
+\section*{Scomposizione della DFT}
+
+\begin{itemize}
+    \item Per i campioni \textbf{pari}:
+    \[
+    X[2m] = \sum_{n=0}^{N/2-1} \left[ x[n] + x[n+N/2] \right] W_{N/2}^{nm}
+    \]
+    \item Per i campioni \textbf{dispari}:
+    \[
+    X[2m+1] = \sum_{n=0}^{N/2-1} \left[ x[n] - x[n+N/2] \right] W_{N/2}^{nm} W_N^n
+    \]
+\end{itemize}
+
+\section*{Algoritmo Iterativo}
+
+\begin{itemize}
+    \item Se \( N = 2^M \), si applica ricorsivamente fino a ottenere \textbf{solo DFT a 2 punti}.
+    \item \textbf{Numero di stadi}: 
+    \[
+    M = \log_2 (N)
+    \]
+    \item \textbf{Numero di "butterfly" per stadio}: \( \frac{N}{2} \)
+\end{itemize}
+
+\section*{Butterfly DIF}
+
+\begin{itemize}
+    \item Struttura simile a DIT, ma con \textbf{dati e flussi invertiti}.
+    \item \textbf{"In-place"} possibile con un solo array di memoria.
+\end{itemize}
+\section*{Differenze tra DIT e DIF}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Caratteristica} & \textbf{DIT (Decimation In Time)} & \textbf{DIF (Decimation In Frequency)} \\
+\hline
+Scomposizione & Sui \textbf{campioni di ingresso} & Sui \textbf{coefficienti di uscita} \\
+\hline
+Bit-Reversal & \textbf{Ingresso in bit-reversed order} & \textbf{Uscita in bit-reversed order} \\
+\hline
+Ordine dei W & Normale & Bit-reversed \\
+\hline
+Algoritmo & \textbf{Top-down} & \textbf{Bottom-up} \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Radix-2 Decimation in Time (DIT) FFT}
+
+\textbf{Principio $\rightarrow$} Si scompone la sequenza \( x[n] \) in due sottosequenze (pari e dispari).
+
+\subsection*{Procedura}
+\begin{enumerate}
+    \item \textbf{Scomposizione ricorsiva} fino a ottenere DFT di lunghezza 2.
+    \item \textbf{Combinazione dei risultati} con operazioni butterfly.
+    \item \textbf{Bit-reversal} sugli indici in ingresso o uscita.
+\end{enumerate}
+
+\section*{Struttura della DIT FFT}
+
+\textbf{Ingresso}: Ordinamento \textbf{bit-reversed}
+
+\textbf{Uscita}: Ordinamento normale
+
+\section*{Butterfly}
+\[
+X[k] = X'[k] + W_N^k X''[k]
+\]
+
+\section*{Computazione in-place}
+Un unico array aggiornato a ogni stadio.
+\section*{DIT Canonica}
+
+\begin{itemize}
+    \item \textbf{Input}: Bit-reversed
+    \item \textbf{Output}: Normale
+    \item \textbf{Coefficienti W}: Normali
+\end{itemize}
+
+\section*{DIT Alternativa}
+
+\begin{itemize}
+    \item \textbf{Input}: Normale
+    \item \textbf{Output}: Bit-reversed
+    \item \textbf{Coefficienti W}: Bit-reversed
+\end{itemize}
+
+\section*{DIT Sequenziale}
+
+\begin{itemize}
+    \item Indici normali a ogni stadio
+    \item \textbf{Non in-place} (maggior uso di memoria)
+\end{itemize}
+
+\section*{Struttura della DIF FFT}
+
+\begin{itemize}
+    \item \textbf{Ingresso}: Ordinamento normale
+    \item \textbf{Uscita}: Ordinamento \textbf{bit-reversed}
+\end{itemize}
+
+\section*{Butterfly}
+\[
+X[k] = X_e[k] + W_N^k X_o[k]
+\]
+
+Computazione in-place
+
+\section*{DIF Canonica}
+
+\begin{itemize}
+    \item \textbf{Input}: Normale
+    \item \textbf{Output}: Bit-reversed
+    \item \textbf{Coefficienti W}: Normali
+\end{itemize}
+
+\section*{DIF Alternativa}
+
+\begin{itemize}
+    \item \textbf{Input}: Bit-reversed
+    \item \textbf{Output}: Normale
+    \item \textbf{Coefficienti W}: Bit-reversed
+\end{itemize}
+
+\section*{DIF Sequenziale}
+
+\begin{itemize}
+    \item Indici normali a ogni stadio
+    \item \textbf{Non in-place}
+\end{itemize}
+
+\section*{Confronto DIT vs DIF}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Caratteristica} & \textbf{DIT FFT} & \textbf{DIF FFT} \\
+\hline
+\textbf{Divisione} & Ingresso (x[n]) & Uscita (X[k]) \\
+\hline
+\textbf{Input} & Bit-reversed & Normale \\
+\hline
+\textbf{Output} & Normale & Bit-reversed \\
+\hline
+\textbf{Computazione} & Bottom-up & Top-down \\
+\hline
+\textbf{Uso memoria} & In-place & In-place \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Costo Computazionale}
+
+\begin{itemize}
+    \item \textbf{Butterfly}: 1 prodotto complesso + 2 somme complesse.
+    \item \textbf{N punti}: N/2 butterfly per stadio.
+    \item \textbf{FFT a N punti} ($N = 2^M$): \textbf{M stadi}.
+\end{itemize}
+
+\section*{Confronto DFT vs FFT}
+
+\begin{itemize}
+    \item \textbf{DFT classica}: O($N^2$)
+    \item \textbf{FFT radix-2}: O($N \log N$)
+\end{itemize}
+
+\section*{Vantaggi della FFT}
+
+\begin{itemize}
+    \item \textbf{Enorme riduzione dei calcoli} rispetto alla DFT.
+    \item \textbf{Hardware ottimizzato}: pipeline, unità parallele.
+    \item \textbf{Utilizzata in DSP, compressione, imaging}.
+\end{itemize}
+
+\section*{Problema principale}
+
+\begin{itemize}
+    \item \textbf{Precisione finita nei calcoli numerici.}
+\end{itemize}
+
+\section*{Categorie principali di algoritmi FFT}
+
+Gli \textbf{algoritmi FFT} sono stati sviluppati per velocizzare il calcolo della Trasformata Discreta di Fourier (DFT).
+
+\subsection*{Categorie}
+
+\begin{itemize}
+    \item \textbf{Radix-M FFT (CFA – Common Factor Algorithm)}:
+    \begin{itemize}
+        \item $N$ deve essere una potenza di $M$. Il caso più diffuso è il \textbf{radix-2}.
+        \item Altri esempi includono \textbf{radix-4} o \textbf{radix-8}, che riducono il numero di operazioni richieste.
+    \end{itemize}
+
+    \item \textbf{Mixed Radix FFT}:
+    \begin{itemize}
+        \item Scompone $N$ come un prodotto di fattori diversi (tipicamente 2, 3, 4 o 8).
+        \item Ogni stadio dell'algoritmo utilizza un radix differente, migliorando l’efficienza del calcolo rispetto all’approccio standard.
+    \end{itemize}
+
+    \item \textbf{Prime Factor FFT (PFA – Prime Factor Algorithm)}:
+    \begin{itemize}
+        \item $N$ viene scomposto in fattori primi tra loro.
+        \item Riduce ulteriormente il numero di moltiplicazioni rispetto alla Mixed Radix FFT.
+    \end{itemize}
+
+    \item \textbf{Algoritmo di Winograd}:
+    \begin{itemize}
+        \item Sfrutta una struttura matematica per trasformare la FFT monodimensionale in una FFT bidimensionale.
+        \item Il costo computazionale complessivo è $O(N \log_2 N)$.
+        \item Riduce il numero di moltiplicazioni a $O(N)$, seppur aumentando il numero di somme da effettuare.
+    \end{itemize}
+\end{itemize}
+
+\section*{Utilizzi}
+
+\begin{itemize}
+    \item \textbf{Progettazione di filtri FIR}: La trasformata inversa di Fourier (IFFT) viene utilizzata per ottenere il filtro desiderato a partire da una griglia di punti in frequenza.
+    \item \textbf{Calcolo della convoluzione e della correlazione}: La FFT permette di eseguire queste operazioni in maniera molto più efficiente rispetto ai metodi tradizionali.
+    \item \textbf{Stima spettrale}: Viene sfruttata la relazione tra la DFT e la Trasformata di Fourier Discreta Tempo-Variabile (DTFT) per analizzare segnali di durata finita.
+    \item \textbf{Riconoscimento vocale e sistemi radar}: Questi settori utilizzano la FFT per analizzare segnali il cui contenuto spettrale cambia nel tempo.
+\end{itemize}
+
+\textbf{Problema critico} → \textbf{Precisione finita}, poiché i calcoli numerici possono introdurre errori dovuti alla rappresentazione discreta dei numeri in hardware.
+
+\textbf{Elaborazione numerica dei segnali (DSP)}: La FFT continua a essere una delle tecniche più utilizzate in innumerevoli applicazioni tecnologiche.
+
+\section*{Calcolo della Convoluzione e della Correlazione con la FFT}
+
+\subsection*{Convoluzione Aperiodica e FFT}
+
+Per due sequenze di lunghezza \( L \) e \( P \), la convoluzione aperiodica può essere calcolata tramite una convoluzione ciclica di \( L+P-1 \) punti. Per sfruttare l'efficienza della FFT, si utilizza lo \textbf{zero-padding} fino alla lunghezza \( L+P-1 \).
+
+\subsection*{Formula della Convoluzione}
+
+La convoluzione aperiodica di due segnali \( x_1[n] \) e \( x_2[n] \) è definita come:
+
+\[
+x_1[n] * x_2[n] = \sum_{m=-\infty}^{+\infty} x_1[m] \cdot x_2[n-m]
+\]
+
+Questa relazione nel dominio della trasformata diventa:
+
+\[
+X_1(e^{j\omega}) \cdot X_2(e^{j\omega})
+\]
+
+\subsection*{Schema del Calcolo della Convoluzione con la FFT}
+
+\begin{enumerate}
+    \item \textbf{Zero-padding} delle sequenze fino alla lunghezza \( L+P-1 \).
+    \item \textbf{Calcolo della FFT} delle sequenze con la stessa lunghezza.
+    \item \textbf{Moltiplicazione} delle FFT ottenute.
+    \item \textbf{Calcolo della IFFT} per ottenere la convoluzione.
+\end{enumerate}
+
+\subsection*{Formula della Correlazione}
+
+La correlazione tra due segnali è definita come:
+
+\[
+x_1[n] * x_2[-n] = \sum_{m=-\infty}^{+\infty} x_1[m] \cdot x_2[n+m]
+\]
+
+E nel dominio della trasformata diventa:
+
+\[
+X_1(e^{j\omega}) \cdot X_2^*(e^{j\omega})
+\]
+
+dove \( X_2^* \) è il complesso coniugato della FFT di \( x_2[n] \).
+
+\subsection*{Schema del Calcolo della Correlazione con la FFT}
+
+\begin{enumerate}
+    \item \textbf{Zero-padding} delle sequenze fino alla lunghezza \( L+P-1 \).
+    \item \textbf{Calcolo della FFT} delle sequenze.
+    \item \textbf{Moltiplicazione della FFT di \( x_1[n] \)} con il coniugato complesso della FFT di \( x_2[n] \).
+    \item \textbf{Calcolo della IFFT} per ottenere la correlazione.
+\end{enumerate}
+
+\subsection*{Ottimizzazioni e Speed-up}
+
+\begin{itemize}
+    \item \textbf{Bit-Reversing Ottimizzato:} Si può evitare il bit-reversing usando un algoritmo \textbf{DIF diretto} per la FFT e \textbf{DIT inverso} per la IFFT.
+    \item \textbf{Calcolo di DFT in parallelo:} È possibile calcolare \textbf{due DFT di sequenze reali contemporaneamente}, sfruttando la proprietà della FFT per segnali reali.
+\end{itemize}
+
+\subsection*{Se una delle Sequenze ha Durata Molto Lunga (Infinita)}
+
+\begin{itemize}
+    \item \textbf{Overlap and Add:} Si decompone \( x[n] \) in blocchi senza sovrapposizione.
+    \item \textbf{Overlap and Save:} Si decompone \( x[n] \) in blocchi con sovrapposizione di \( P-1 \) punti, calcolando la convoluzione circolare di ogni blocco (FFT a \( L \) punti).
+\end{itemize}
+

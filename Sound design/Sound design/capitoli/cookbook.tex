@@ -1,0 +1,213 @@
+
+
+\chapter{Formule pratiche per i coefficienti dei filtri EQ biquad}
+
+Tutte le funzioni di trasferimento dei filtri sono derivate da prototipi analogici (che sono mostrati sotto per ciascun tipo di filtro EQ) e sono state digitalizzate usando la Trasformata Bilineare (Bilinear Transform). La distorsione di frequenza (frequency warping) della BLT è stata presa in considerazione sia per la rilocalizzazione della frequenza (il normale "prewarping") sia per la ri-regolazione della larghezza di banda (poiché essa viene compressa nella trasformazione da analogico a digitale).
+
+Partiamo da una funzione di trasferimento biquad definita come:
+\begin{equation}
+H(z) = \frac{b_0 + b_1 z^{-1} + b_2 z^{-2}}{a_0 + a_1 z^{-1} + a_2 z^{-2}} \tag{Eq 1}
+\end{equation}
+
+Questo mostra 6 coefficienti invece di 5 quindi, a seconda della tua architettura, potresti normalizzare $a_0$ a 1 e forse anche $b_0$ a 1 (e raccogliere questo in un coefficiente di guadagno complessivo). Allora la funzione di trasferimento diventa:
+
+\begin{equation}
+H(z) = \frac{\frac{b_0}{a_0} + \frac{b_1}{a_0} z^{-1} + \frac{b_2}{a_0} z^{-2}}{1 + \frac{a_1}{a_0} z^{-1} + \frac{a_2}{a_0} z^{-2}} \tag{Eq 2}
+\end{equation}
+
+oppure
+
+\begin{equation}
+H(z) = \left(\frac{b_0}{a_0}\right) \cdot \frac{1 + \frac{b_1}{b_0} z^{-1} + \frac{b_2}{b_0} z^{-2}}{1 + \frac{a_1}{a_0} z^{-1} + \frac{a_2}{a_0} z^{-2}} \tag{Eq 3}
+\end{equation}
+
+L'implementazione più diretta sarebbe la "Forma Diretta 1" (Eq 2):
+
+\begin{equation}
+y[n] = \frac{b_0}{a_0} x[n] + \frac{b_1}{a_0} x[n-1] + \frac{b_2}{a_0} x[n-2] - \frac{a_1}{a_0} y[n-1] - \frac{a_2}{a_0} y[n-2] \tag{Eq 4}
+\end{equation}
+
+\section*{Parametri definiti dall'utente}
+
+\begin{itemize}
+    \item $F_s$: frequenza di campionamento
+    \item $f_0$: frequenza centrale o di taglio (o di metà guadagno per shelf)
+    \item dBgain: solo per i filtri peaking e shelving
+    \item Q: definizione tipica ingegneristica (con aggiustamento per il filtro peakingEQ)
+    \item oppure BW: larghezza di banda in ottave
+    \item oppure S: parametro di pendenza per gli shelving
+\end{itemize}
+
+\section*{Variabili intermedie}
+
+\begin{align*}
+A &= \sqrt{10^{\text{dBgain}/20}} = 10^{\text{dBgain}/40} \
+\omega_0 &= 2\pi f_0 / F_s \\
+\alpha &= \begin{cases}
+    \frac{\sin(\omega_0)}{2Q} & \text{(caso Q)} \\
+    \sin(\omega_0) \sinh \left( \frac{\ln(2)}{2} \cdot \text{BW} \cdot \frac{\omega_0}{\sin(\omega_0)} \right) & \text{(caso BW)} \\
+    \frac{\sin(\omega_0)}{2} \sqrt{(A + 1/A)(1/S - 1) + 2} & \text{(caso S)}
+\end{cases}
+\end{align*}
+
+\section*{Coefficienti per ciascun tipo di filtro}
+
+\subsection*{Passa basso (LPF)}
+\begin{align*}
+b_0 &= \frac{1 - \cos(\omega_0)}{2} \\
+b_1 &= 1 - \cos(\omega_0) \\
+b_2 &= \frac{1 - \cos(\omega_0)}{2} \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Passa alto (HPF)}
+\begin{align*}
+b_0 &= \frac{1 + \cos(\omega_0)}{2} \\
+b_1 &= -(1 + \cos(\omega_0)) \\
+b_2 &= \frac{1 + \cos(\omega_0)}{2} \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Passa banda (BPF) - guadagno costante nella skirt}
+\begin{align*}
+b_0 &= \frac{\sin(\omega_0)}{2} = Q\alpha \\
+b_1 &= 0 \\
+b_2 &= -\frac{\sin(\omega_0)}{2} = -Q\alpha \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Passa banda (BPF) - guadagno di picco a 0 dB}
+\begin{align*}
+b_0 &= \alpha \\
+b_1 &= 0 \\
+b_2 &= -\alpha \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Notch}
+\begin{align*}
+b_0 &= 1 \\
+b_1 &= -2 \cos(\omega_0) \\
+b_2 &= 1 \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Filtro all-pass (APF)}
+\begin{align*}
+b_0 &= 1 - \alpha \\
+b_1 &= -2 \cos(\omega_0) \\
+b_2 &= 1 + \alpha \\
+a_0 &= 1 + \alpha \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha
+\end{align*}
+
+\subsection*{Peaking EQ}
+\begin{align*}
+b_0 &= 1 + \alpha A \\
+b_1 &= -2 \cos(\omega_0) \\
+b_2 &= 1 - \alpha A \\
+a_0 &= 1 + \alpha / A \\
+a_1 &= -2 \cos(\omega_0) \\
+a_2 &= 1 - \alpha / A
+\end{align*}
+
+\subsection*{Low Shelf}
+\begin{align*}
+b_0 &= A\left[(A+1) - (A-1)\cos(\omega_0) + 2\sqrt{A}\alpha\right] \\
+b_1 &= 2A\left[(A-1) - (A+1)\cos(\omega_0)\right] \\
+b_2 &= A\left[(A+1) - (A-1)\cos(\omega_0) - 2\sqrt{A}\alpha\right] \\
+a_0 &= (A+1) + (A-1)\cos(\omega_0) + 2\sqrt{A}\alpha \\
+a_1 &= -2\left[(A-1) + (A+1)\cos(\omega_0)\right] \\
+a_2 &= (A+1) + (A-1)\cos(\omega_0) - 2\sqrt{A}\alpha
+\end{align*}
+
+\subsection*{High Shelf}
+\begin{align*}
+b_0 &= A\left[(A+1) + (A-1)\cos(\omega_0) + 2\sqrt{A}\alpha\right] \\
+b_1 &= -2A\left[(A-1) + (A+1)\cos(\omega_0)\right] \\
+b_2 &= A\left[(A+1) + (A-1)\cos(\omega_0) - 2\sqrt{A}\alpha\right] \\
+a_0 &= (A+1) - (A-1)\cos(\omega_0) + 2\sqrt{A}\alpha \\
+a_1 &= 2\left[(A-1) - (A+1)\cos(\omega_0)\right] \\
+a_2 &= (A+1) - (A-1)\cos(\omega_0) - 2\sqrt{A}\alpha
+\end{align*}
+
+\section*{Trasformata Bilineare e Sostituzioni}
+
+La trasformata bilineare (con compensazione della distorsione di frequenza) effettua la seguente sostituzione:
+
+\[
+s \leftarrow \frac{1}{\tan(\omega_0/2)} \cdot \frac{1 - z^{-1}}{1 + z^{-1}}
+\]
+
+Utilizzando le seguenti identità trigonometriche:
+
+\[
+\tan(\omega_0/2) = \frac{\sin(\omega_0)}{1 + \cos(\omega_0)} \qquad \text{e} \qquad \tan^2(\omega_0/2) = \frac{1 - \cos(\omega_0)}{1 + \cos(\omega_0)}
+\]
+
+otteniamo le seguenti sostituzioni:
+
+\[
+1 \leftarrow \frac{1 + \cos(\omega_0)}{1 + \cos(\omega_0)} \cdot \frac{1 + 2z^{-1} + z^{-2}}{1 + 2z^{-1} + z^{-2}}
+\]
+
+\[
+s \leftarrow \frac{1 + \cos(\omega_0)}{\sin(\omega_0)} \cdot \frac{1 - z^{-1}}{1 + z^{-1}} = \frac{1 + \cos(\omega_0)}{\sin(\omega_0)} \cdot \frac{1 - z^{-2}}{1 + 2z^{-1} + z^{-2}}
+\]
+
+\[
+s^2 \leftarrow \frac{1 + \cos(\omega_0)}{1 - \cos(\omega_0)} \cdot \frac{1 - 2z^{-1} + z^{-2}}{1 + 2z^{-1} + z^{-2}}
+\]
+
+Il fattore:
+
+\[
+\frac{1 + \cos(\omega_0)}{1 + 2z^{-1} + z^{-2}}
+\]
+
+è comune a tutti i termini sia al numeratore che al denominatore, può quindi essere raccolto e successivamente eliminato dalle sostituzioni, portando a:
+
+\[
+1 \leftarrow \frac{1 + 2z^{-1} + z^{-2}}{1 + \cos(\omega_0)}
+\]
+
+\[
+s \leftarrow \frac{1 - z^{-2}}{\sin(\omega_0)}
+\]
+
+\[
+s^2 \leftarrow \frac{1 - 2z^{-1} + z^{-2}}{1 - \cos(\omega_0)}
+\]
+
+Inoltre, tutti i termini (sia numeratore che denominatore) possono essere moltiplicati per un fattore comune $\sin^2(\omega_0)$, risultando infine nelle seguenti sostituzioni:
+
+\[
+1 \leftarrow (1 + 2z^{-1} + z^{-2}) \cdot (1 - \cos(\omega_0))
+\]
+
+\[
+s \leftarrow (1 - z^{-2}) \cdot \sin(\omega_0)
+\]
+
+\[
+s^2 \leftarrow (1 - 2z^{-1} + z^{-2}) \cdot (1 + \cos(\omega_0))
+\]
+
+\[
+1 + s^2 \leftarrow 2 \cdot (1 - 2\cos(\omega_0)z^{-1} + z^{-2})
+\]
+
+Le formule dei coefficienti biquad derivano dalle espressioni sopra dopo una piccola semplificazione.
+
+

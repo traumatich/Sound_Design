@@ -1,0 +1,164 @@
+
+\chapter{Sintesi additiva e FM}
+\section{Classificazione delle Tecniche di Sintesi Sonora}
+
+Le principali tecniche di sintesi possono essere divise in due categorie:
+
+\subsection*{Astratte}
+
+\begin{itemize}
+    \item \textbf{Sintesi Additiva}: creazione del suono sommando sinusoidi con frequenze, ampiezze e fasi diverse (basata sulla serie di Fourier).
+    \item \textbf{Sintesi Sottrattiva}: parte da un suono ricco e ne modifica il timbro con filtri.
+    \item \textbf{Sintesi FM (Frequency Modulation) e PM (Phase Modulation)}: manipolazione della frequenza o fase di un segnale per creare timbri complessi.
+    \item \textbf{Waveshaping}: modifica non lineare del segnale per introdurre armoniche.
+    \item \textbf{Sintesi Granulare}: costruisce suoni a partire da microsuoni (grani).
+\end{itemize}
+
+\subsection*{Emulative}
+
+\begin{itemize}
+    \item \textbf{Sampling (Campionamento)}: riproduzione di suoni registrati.
+    \item \textbf{Modellazione fisica}: simulazione matematica del comportamento di strumenti reali.
+\end{itemize}
+
+\section{Sintesi Additiva}
+
+\subsection*{Principio Fondamentale}
+
+\begin{itemize}
+    \item Basata sulla trasformata di Fourier: ogni suono può essere decomposto in una somma di sinusoidi.
+    \item Ogni parziale ha un’\textbf{ampiezza} e una \textbf{frequenza} variabili nel tempo.
+\end{itemize}
+
+\subsection*{Storia e Applicazioni}
+
+\begin{itemize}
+    \item \textbf{Organo Hammond (Laurens Hammond, 1930s)}
+    \begin{itemize}
+        \item Usa un meccanismo elettromeccanico per generare sinusoidi.
+        \item Costituito da \textbf{Tone Wheels} (ruote foniche) che ruotano per creare suoni.
+        \item Offre una generazione \textbf{intonata ma statica}, senza variazioni dinamiche.
+    \end{itemize}
+    \item \textbf{Miglioramenti}
+    \begin{itemize}
+        \item \textbf{Vibrato e chorus}: modulazione per aggiungere movimento.
+        \item \textbf{Leslie Speaker}: cassa con altoparlanti rotanti che creano effetto Doppler.
+        \item \textbf{Percussion e Key Click}: transienti aggiuntivi per suoni più espressivi.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Analisi delle Parziali}
+
+Per sintetizzare suoni reali bisogna prima analizzare le componenti spettrali:
+
+\begin{itemize}
+    \item \textbf{STFT (Short-Time Fourier Transform)}: suddivisione temporale del segnale per analisi dettagliata.
+    \item \textbf{Eterodina}: misura delle parziali tramite battimenti con segnali di riferimento.
+\end{itemize}
+
+\section{Modulazioni e Sintesi FM}
+
+\subsection*{Amplitude Modulation (AM)}
+
+\begin{itemize}
+    \item \textbf{Moltiplicazione di due sinusoidi} (portante e modulante).
+    \item Genera \textbf{bande laterali} attorno alla frequenza principale.
+\end{itemize}
+
+\subsection*{Frequency Modulation (FM)}
+
+\begin{itemize}
+    \item \textbf{Problema iniziale}: ottenere suoni complessi da sinusoidi semplici senza usare troppi oscillatori.
+    \item \textbf{Soluzione (John Chowning, 1968)}: modulare la frequenza di un’onda sinusoidale con un'altra onda sinusoidale.
+\end{itemize}
+
+\subsection*{Formula Generale della FM}
+
+\[
+y(t)= A_c \sin(2\pi f_c t + \beta \sin(2\pi f_m t))
+\]
+
+Dove:
+
+\begin{itemize}
+    \item \( A_c \) = ampiezza della portante
+    \item \( f_c \) = frequenza della portante
+    \item \( f_m \) = frequenza della modulante
+    \item \( \beta \) = indice di modulazione (determina la complessità spettrale)
+\end{itemize}
+
+\subsection*{Proprietà dello Spettro FM}
+
+\begin{itemize}
+    \item \textbf{Indice di modulazione} (\( \beta \)): maggiore è il valore, più il suono ha armoniche.
+    \item \textbf{Funzioni di Bessel}: determinano l’ampiezza delle componenti spettrali.
+    \item \textbf{Regola di Carson}:
+    \[
+    BC = 2 (\beta f_m + f_m)
+    \]
+    Indica che la \textbf{larghezza di banda aumenta con} \( \beta \).
+\end{itemize}
+
+\subsection*{Armonicità e Inarmonicità}
+
+\begin{itemize}
+    \item Se il rapporto \( f_c/f_m \) è intero, lo spettro risultante è \textbf{armonico}.
+    \item Se è razionale (\( N_1/N_2 \)), la frequenza fondamentale sarà \( f_0 = f_c / N_1 \) o \( f_0 = f_m / N_2 \).
+    \item Se è irrazionale, il risultato è uno \textbf{spettro inarmonico} (usato per suoni metallici o percussivi).
+\end{itemize}
+
+\section{Sintesi FM nel Yamaha DX7}
+
+\subsection*{Brevetto e Commercializzazione}
+
+\begin{itemize}
+    \item \textbf{Chowning brevettò la FM nel 1974} e Yamaha lo acquistò.
+    \item Yamaha sviluppò \textbf{chip ASIC} per renderla efficiente in hardware.
+    \item Nel 1983 nasce il \textbf{DX7}, il primo sintetizzatore digitale FM.
+\end{itemize}
+
+\subsection*{Struttura del DX7}
+
+\begin{itemize}
+    \item \textbf{Operatori}: unità base della sintesi FM, ciascuna con il proprio inviluppo.
+    \item \textbf{Modulatori e Carrier}:
+    \begin{itemize}
+        \item I \textbf{modulatori} generano variazioni timbriche.
+        \item I \textbf{carrier} producono il suono udibile.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Algoritmi del DX7}
+
+\begin{itemize}
+    \item Configurazioni predefinite di operatori (da \textbf{semplici a complesse}).
+    \item \textbf{Possibilità di feedback}:
+    \begin{itemize}
+        \item Permette di generare spettri più ricchi aumentando la complessità del segnale.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Envelope Generators (EG)}
+
+\begin{itemize}
+    \item \textbf{8 parametri} per definire curve dinamiche nel tempo.
+    \item \textbf{Controllo della dinamica}:
+    \begin{itemize}
+        \item Maggiore \textbf{key velocity} → maggiore \textbf{indice di modulazione} → spettro più ampio.
+    \end{itemize}
+\end{itemize}
+
+\section{Conclusioni}
+
+\begin{itemize}
+    \item \textbf{Sintesi Additiva}
+    \begin{itemize}
+        \item \textbf{Vantaggi}: controllo preciso sulle armoniche.
+        \item \textbf{Svantaggi}: alto costo computazionale.
+    \end{itemize}
+    \item \textbf{Sintesi FM}
+    \begin{itemize}
+        \item \textbf{Vantaggi}: più efficiente, grande varietà timbrica con pochi oscillatori.
+        \item \textbf{Svantaggi}: difficile da programmare per ottenere suoni desiderati.
+    \end{itemize}
+\end{itemize}

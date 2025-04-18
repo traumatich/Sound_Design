@@ -1,0 +1,241 @@
+\chapter{Effetti basati su DL}
+
+\section{Lista di effetti basati su Delay Line}
+\begin{itemize}
+    \item Digital Delay
+    \item Reverb
+    \item Chorus
+    \item Flanger
+    \item Vibrato
+\end{itemize}
+
+\section{Delay Line}
+\textbf{• Con il termine Delay Line si intende un buffer di memoria lungo Nsamples nel quale viene scritto un dato e successivamente viene letto}
+\textbf{• Time = distanza tra i puntatori di scrittura e lettura}
+
+\section{Vibrato}
+\textbf{Il dato viene letto a diverse velocità così da cambiarne il pitch}
+
+\section{Slapback/Echo/Delay}
+\begin{itemize}
+    \item \textbf{Slapback}(o doubling): 10 < M < 25 ms
+    \item \textbf{Echo}: M > 50 ms
+    \item g setta il dry/wet
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Delay}(simula multiple riflessioni)
+    \item g setta il dry/wet
+\end{itemize}
+
+\section{Flanger/Chorus}
+\begin{itemize}
+    \item \textbf{Flanger}: M < 15 ms, variabile periodicamente (LFO)
+    \item \textbf{Chorus}: generato da copie del segnale a pitch leggermente modificati: si usa il delay che genera più vibrato, sommati al segnale diretto
+    \item M1, M2 10-25 ms, diversi tra loro
+\end{itemize}
+
+\section{Phaser}
+\begin{itemize}
+    \item L'orecchio umano non è molto sensibile alle differenze di fase, ma questo crea interferenze udibili quando viene mixato con il segnale dry (non processato), creando dei notch.
+    \item Il numero di filtri all-pass (solitamente chiamati stadi) varia a seconda dei modelli; alcuni phaser analogici offrono 4, 6, 8 o 12 stadi.
+\end{itemize}
+
+\section*{Riverbero}
+
+\begin{itemize}
+    \item La riverberazione naturale è una condizione tipica degli ambienti spazialmente delimitati (stanze, auditorium, chiese, teatri, ecc).
+    
+    \item Ogni ambiente ha una propria e caratteristica riverberazione (si pensi al tipico riverbero di una chiesa o di un cinema).
+    
+    \item In natura, gli ambienti privi di riverbero sono una condizione molto difficile da avere.
+    
+    \item Esistono apposite camere dette anecoiche, le quali sono studiate per eliminare le riverberazioni ambientali.
+\end{itemize}
+
+\begin{itemize}
+    \item In rosso: 
+    \begin{itemize}
+        \item Il path diretto dalla sorgente all’ascoltatore.
+    \end{itemize}
+    
+    \item In blu:
+    \begin{itemize}
+        \item Le riflessioni ambientali (riverbero).
+    \end{itemize}
+    
+    \item Esistono diverse tipologie di riflessioni a seconda di quanti «rimbalzi» ci sono tra sorgente e ascoltatore.
+\end{itemize}
+
+\section{Room Impulse Response (RIR)}
+\begin{itemize}
+    \item La caratterizzazione di un ambiente è un tema molto importante nel Sound Design.
+    
+    \item Ogni ambiente ha il suo tipico riverbero ambientale.
+    
+    \item Modellare correttamente un ambiente, in termini di riverbero, molto spesso è fondamentale al fine di avere un sound design musicale ed efficace.
+    
+    \item Possiamo distinguere differenti «componenti» di un segnale riverberato:
+    \begin{itemize}
+        \item Suono diretto (Dry)
+        \item Early Reflections
+        \item Late riverberation
+        \item Decay Rate
+        \item Predelay (T0)
+    \end{itemize}
+\end{itemize}
+
+\section{Reverberation Time}
+
+\begin{itemize}
+    \item Il Reverberation Time misura il cosiddetto $T_{60}$, cioè il tempo dopo il quale il segnale di riverbero è attenuato di 60 dB rispetto al suo livello di partenza.
+    
+    \item Il $T_{60}$, in natura, è funzione di differenti fattori:
+    \begin{itemize}
+        \item Dimensioni $W \times L \times H$ dell’ambiente
+        \item Materiali costruttivi delle pareti (riflettenti e non)
+        \item Elementi acustici ambientali
+    \end{itemize}
+\end{itemize}
+
+\section{Effetto del pre-delay}
+\begin{itemize}
+    \item Il pre-delay tra il segnale diretto e la sua replica ha i seguenti effetti dipendenti dal tempo:
+    \begin{itemize}
+        \item $< 50$ ms: Haas effect, o doubling
+        \item $50 < \text{delay} < 100$ ms: near-echo (prolonged/indistinct)
+        \item $> 100$ ms: echo
+    \end{itemize}
+\end{itemize}
+
+
+\section*{Artificial Reverberation}
+
+\begin{itemize}
+    \item Un campo di lunga durata:
+    \begin{itemize}
+        \item Anni '20: spazio acustico vuoto con altoparlante e microfono, riverbero a molla Hammond.
+        \item Anni '50: riverbero a piastra.
+        \item 1960s: BBD (Panasonic MN3011 ha taps di uscita multipli in posizioni reciprocamente prime).
+        \item Schroeder (Bell Labs) introdusse il "Colorless Artificial Reverberation" nel 1961 nell'IRE Trans. on Audio, basato su linee di ritardo e filtri all-pass. Moorer aggiunse un filtro a un polo per il decadimento in funzione della frequenza.
+        \item Negli anni '70 furono commercializzati diversi riverberi digitali, tra cui il Lexicon Delta T-101 e il Lexicon 224.
+        \item In seguito sono stati introdotti altri metodi: image-source method (Allen and Berkeley, 1979), Digital waveguides (Smith, 1985), etc.
+    \end{itemize}
+    
+    \item Esistono diversi approcci:
+    \begin{itemize}
+        \item Digital waveguide mesh
+        \item Numerical simulations
+        \item Convolution with measured IR
+        \item Delay network methods
+        \item Schroeder
+        \item Dattorro
+    \end{itemize}
+\end{itemize}
+
+\section{Riverbero a Convoluzione}
+
+\begin{itemize}
+    \item La stanza come LTI --> la sua IR caratterizza perfettamente la stanza (Hp: campo riverberante).
+    \item Se registriamo l'IR, possiamo fare la convoluzione di qualsiasi suono con esso per ottenere il riverbero atteso.
+\end{itemize}
+\[
+    y_{\text{rev}}[n] = \sum_{m=0}^{M} h[m] \cdot x[n - m]
+\]
+
+
+\begin{itemize}
+    \item L'IR è una proprietà dell'intero spazio solo se il campo diretto è trascurabile (condizione di campo riverberante) --> ci sarà sempre un volume (eventualmente grande) dello spazio in cui il campo diretto non è trascurabile.
+    \item Quando il campo diretto non è trascurabile, l'IR dipende dalla distanza e dalla posizione della sorgente e del ricevitore.
+\end{itemize}
+
+
+\begin{itemize}
+    \item L'implementazione diretta è costosa:
+    \begin{itemize}
+        \item $L$ = lunghezza del segnale di ingresso --> la convoluzione richiede $L$ MUL e $(L-1)$ SUM per ogni campione di uscita.
+        \item Se $M$ = lunghezza del segnale in ingresso, il segnale in uscita sarà lungo $L+M$ campioni.
+    \end{itemize}
+    \item Convoluzione nel tempo = Prodotto in frequenza:
+    \begin{itemize}
+        \item Se $K$ = bin della FFT = dimensione del frame si ha:
+        \item Costo della FFT: $O(N \log N)$
+        \item $K$ prodotti complessi (4K MUL + 3K SUM)
+        \item Costo dell'IFFT
+    \end{itemize}
+    \item Costo computazionale ridotto per $K$ elevati, ma latenza elevata!
+    \item Sono stati proposti molti algoritmi specializzati.
+\end{itemize}
+
+\section{Riverbero a Convoluzione (Vantaggi e Svantaggi)}
+
+\begin{itemize}
+    \item \textbf{Vantaggi:}
+    \begin{itemize}
+        \item Istantanea perfetta di una stanza in campo riverberante.
+        \item Concettualmente facile da capire.
+    \end{itemize}
+    
+    \item \textbf{Svantaggi:}
+    \begin{itemize}
+        \item È necessario effettuare molte misure di IR con diverse posizioni di sorgente e ricevitore, selezionandone una.
+        \item Impossibile cambiare le proprietà della stanza: l'IR è un'istantanea della stanza (cfr. campionamento).
+        \item Alto costo computazionale (+ compromesso con la latenza).
+        \item Complesso da ottenere, sono necessari altoparlanti e microfoni costosi.
+    \end{itemize}
+\end{itemize}
+
+
+\section{Schroeder reverb}
+\textbf{• Un feedback comb che emula gli echi ripetuti, che è ciò che ci interessa.}
+\textbf{• Tuttavia, colora anche lo spettro}
+\textbf{• Una topologia che introduce echi senza colore spettrale è il ritardo allpass di Schroeder:}
+
+\section{Feedback Delay Network (FDN)}
+
+\begin{itemize}
+    \item Introdotte da Gerzon nel 1971-72.
+    \item Parte dall'osservazione che i singoli filtri comb danno una scarsa qualità delle code di riverbero (colorano troppo il segnale se sono troppi pochi).
+    \item Più filtri comb suonano molto bene però quando sono accoppiati, di fatto quando vengono combinati e messi in cross-feedback.
+\end{itemize}
+
+\begin{itemize}
+    \item La matrice di ricombinazione deve avere la proprietà di ortogonalità.
+    \item Si sfruttano le matrici di Hadamard.
+    \[
+H_1 = [1]
+\]
+
+\[
+H_2 = 
+\begin{bmatrix}
+1 & 1 \\
+1 & -1
+\end{bmatrix}
+\]
+
+\[
+H_{2^k} = 
+\begin{bmatrix}
+H_{2^{k-1}} & H_{2^{k-1}} \\
+H_{2^{k-1}} & -H_{2^{k-1}}
+\end{bmatrix}
+= H_2 \otimes H_{2^{k-1}}
+\]
+
+    \item Alcune modifiche alla matrice di Hadamard 4x4 sono state proposte da Stautner e Puckette.
+\end{itemize}
+
+\section{Feedback Delay Network (FDN) (Approccio ``lossless'')}
+
+\begin{itemize}
+    \item Un approccio ``lossless" per la progettazione di matrici di feedback:
+    \begin{itemize}
+        \item \textbf{IDEA:} un late reverb IR dovrebbe assomigliare a un rumore a decadimento esponenziale (cfr. con velvet noise).
+        \item Un buon approccio progettuale consiste nel partire da un prototipo senza perdita (T60 infinito) e lavorare per renderlo un buon generatore di rumore.
+        \item Regolare i ritardi (mutuamente primi).
+        \item Esistono diversi metodi per ottenere una mode density uguale.
+        \item Regolare la matrice di feedback.
+        \item Una volta ascoltato un rumore omogeneo, i ritardi possono essere regolati per ottenere il giusto tempo di decadimento per ogni banda.
+    \end{itemize}
+\end{itemize}

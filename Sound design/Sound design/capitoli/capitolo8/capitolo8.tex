@@ -1,0 +1,236 @@
+\chapter{Introduzione al Protocollo MIDI}
+
+\section{MIDI: Protocollo Musical Instruments Digital Interface}
+
+Il protocollo MIDI è un sistema per la comunicazione tra dispositivi musicali digitali. È un protocollo \textbf{seriale}.
+
+\begin{figure}[h!]
+    \centering
+    %\includegraphics[width=0.7\textwidth]{Screenshot_2025-03-20_092820.png}
+    \caption{Esempio di trasmissione MIDI}
+\end{figure}
+
+I dati vengono trasmessi con bit di \textbf{start} e di \textbf{stop}.
+
+\subsection*{Tipi di Byte}
+
+I byte trasmessi possono essere di due tipi:
+
+\begin{itemize}
+    \item \textbf{Byte di stato}: MSbit = 1
+    \item \textbf{Byte di dati}: MSbit = 0
+\end{itemize}
+
+\subsection*{Caratteristiche Generali}
+
+\begin{itemize}
+    \item Non c'è collegamento in rete.
+    \item Ogni cavo MIDI può trasmettere i dati attraverso \textbf{16 canali}.
+    \item I dispositivi possono essere collegati in cascata.
+\end{itemize}
+
+\section{Tipi di Messaggi MIDI}
+
+I messaggi MIDI possono essere classificati come segue:
+
+\subsection*{1. Messaggi a 2 byte e 3 byte}
+
+Questi messaggi contengono:
+
+\begin{itemize}
+    \item \textbf{Status Byte}
+        \begin{itemize}
+            \item \textbf{MSB nibble} (3 bit): indica il tipo di messaggio.
+            \item \textbf{LSB nibble} (4 bit): indica il canale (0-15, che corrisponde a 1-16 in notazione musicale).
+        \end{itemize}
+    \item \textbf{Data Byte 1}: contiene informazioni come la nota suonata.
+    \item \textbf{Data Byte 2}: contiene altre informazioni come la velocità (velocity).
+\end{itemize}
+
+\subsection*{2. Messaggi di Control Change (CC)}
+
+Formato:
+
+\[
+0xBi \ 0xCC \ 0xVV
+\]
+
+\begin{itemize}
+    \item `0xB`: Indica un messaggio di Control Change.
+    \item `i`: Indica il canale MIDI (0-15, cioè 1-16 in notazione musicale).
+    \item `0xCC`: Numero del controllo.
+    \item `0xVV`: Valore assegnato al controllo.
+\end{itemize}
+
+\subsection*{3. Messaggi di Program Change}
+
+Utilizzati per cambiare rapidamente preset o patch di strumenti digitali.
+
+Formato base:
+
+\[
+0xCi \ 0xPP
+\]
+
+\begin{itemize}
+    \item `0xC`: Indica un messaggio di Program Change.
+    \item `i`: Canale MIDI.
+    \item `0xPP`: Numero del preset (da 0 a 127).
+\end{itemize}
+
+Per superare il limite di 128 preset, si usano due messaggi di Control Change:
+
+\begin{itemize}
+    \item \textbf{MSB Bank Select}: \( 0xBi \ 0x00 \ 0xBB \)
+    \item \textbf{LSB Bank Select (opzionale)}: \( 0xBi \ 0x20 \ 0xbb \)
+    \item \textbf{Program Change}: \( 0xCi \ 0xPP \)
+\end{itemize}
+
+\subsection*{4. Messaggi Speciali MIDI}
+
+\begin{itemize}
+    \item \textbf{Pitch Bend}: Permette di variare l’intonazione di una nota in modo continuo.
+    \item \textbf{NRPN (Non-Registered Parameter Number)}: Trasmette parametri ad alta risoluzione (fino a 14 bit).
+\end{itemize}
+
+\subsubsection*{Formato di NRPN}
+
+\begin{itemize}
+    \item `CC 0x63 0xPP`: MSB del parametro.
+    \item `CC 0x62 0xpp`: LSB del parametro.
+    \item `CC 0x06 0xVV`: MSB del valore.
+    \item (Opzionale) `CC 0x26 0xvv`: LSB del valore.
+\end{itemize}
+
+\subsection*{5. Messaggi System Exclusive (Sysex)}
+
+Messaggi personalizzati di lunghezza arbitraria, definiti dal produttore.
+
+Formato:
+
+\[
+0xF0 \ \text{<ID produttore>} \ \text{<payload>} \ 0xF7
+\]
+
+\subsection*{6. Messaggi System Realtime}
+
+Gestiscono il sincronismo e il controllo globale del sistema MIDI.
+
+\begin{itemize}
+    \item \textbf{MIDI Clock}: `0xF8` (24 pulse = 1 quarto).
+    \item \textbf{Start sequenza}: `0xFA`.
+    \item \textbf{Continue sequenza}: `0xFB`.
+    \item \textbf{Stop sequenza}: `0xFC`.
+    \item \textbf{Active Sensing}: `0xFE`.
+\end{itemize}
+
+\subsection*{7. Messaggi di Sistema (System Common CC)}
+
+Comandi per il controllo generale del sistema MIDI.
+
+\begin{itemize}
+    \item \textbf{All Sounds OFF}: `0xBi 0x78 0x00`.
+    \item \textbf{All Notes OFF}: `0xBi 0x7B 0x00`.
+    \item \textbf{Reset All Controllers}: `0xBi 0x79 0x00`.
+    \item \textbf{Local Control ON/OFF}: `0xBi 0x7A 0xVV`.
+\end{itemize}
+
+\section*{Estensioni del Protocollo MIDI}
+
+Nonostante il MIDI sia un protocollo vecchio, continua a essere efficace grazie a diverse evoluzioni:
+
+\begin{itemize}
+    \item \textbf{USB-MIDI}: Trasporta i dati MIDI su una connessione USB, con velocità di trasmissione più elevate.
+    \item \textbf{BLE-MIDI}: Permette la trasmissione di dati MIDI tramite Bluetooth Low Energy, eliminando i cavi.
+    \item \textbf{TRS-MIDI}: Utilizza il connettore \texttt{minijack TRS} per multiplexare segnali MIDI e analogici.
+\end{itemize}
+
+\subsection*{MIDI 2.0 (Introdotto nel 2019)}
+
+Funzionalità avanzate:
+
+\begin{itemize}
+    \item \textbf{MIDI Capability Inquiry (CI)}: Permette ai dispositivi di negoziare le funzionalità disponibili.
+    \item \textbf{Pacchetti dati più lunghi}: I messaggi possono essere di 32-128 bit e supportano fino a 256 canali.
+    \item \textbf{Sysex migliorato}: Ora può trasportare 8 bit per byte, facilitando lo scambio di dati complessi.
+\end{itemize}
+
+\section{File MIDI}
+
+I formati principali dei file MIDI sono:
+
+\begin{itemize}
+    \item \textbf{Formato 0}: Una sola traccia, con tutti i dati MIDI combinati.
+    \item \textbf{Formato 1}: Più tracce indipendenti, che possono essere riprodotte simultaneamente.
+\end{itemize}
+
+\section{Struttura del file MIDI}
+
+\subsection*{Header Chunk}
+
+\begin{itemize}
+    \item \textbf{Header Chunk} → Contiene informazioni generali, inizia con il codice \texttt{"MThd"}.
+    \item \textbf{Sintassi dell'header:}
+\end{itemize}
+
+\[
+\text{MThd} \ <\text{length of header}> \ <\text{format}> \ <\text{number of tracks}> \ <\text{division}>
+\]
+
+\begin{itemize}
+    \item \textbf{\textless{}format\textgreater{}} → Indica se il file è di tipo 0 o 1.
+    \item \textbf{\textless{}number of tracks\textgreater{}} → Numero di tracce nel file.
+    \item \textbf{\textless{}division\textgreater{}} → Specifica la risoluzione temporale (\textit{tick per quarto di nota}).
+\end{itemize}
+
+\section{Track Chunk nei file MIDI}
+
+Ogni file MIDI può contenere una o più \textbf{tracce}, che memorizzano eventi musicali e dati di controllo.
+
+\subsection*{Sintassi del Track Chunk}
+
+\begin{verbatim}
+MTrk <lunghezza> <stream>
+\end{verbatim}
+
+\begin{itemize}
+    \item \textbf{\textless{}MTrk\textgreater{}} → Indica l'inizio della traccia.
+    \item \textbf{\textless{}lunghezza\textgreater{}} → Specifica la dimensione della traccia in byte.
+    \item \textbf{\textless{}stream\textgreater{}} → Contiene eventi MIDI, Sysex o Meta-Eventi.
+\end{itemize}
+
+\subsection*{Eventi in una traccia MIDI}
+
+Ogni evento è composto da un \textbf{delta time} (tempo relativo all'evento precedente) e un messaggio MIDI.
+
+\section*{Formato di un evento MIDI}
+
+Il formato di un evento MIDI è il seguente:
+
+\begin{verbatim}
+<delta> <messaggio MIDI>
+\end{verbatim}
+
+\begin{itemize}
+    \item \textbf{\textless{}delta\textgreater{}} → Tempo trascorso dall'ultimo evento.
+    \item \textbf{\textless{}messaggio MIDI\textgreater{}} → Qualsiasi messaggio MIDI standard (Note On, Note Off, Control Change, ecc.).
+\end{itemize}
+
+\section*{Meta-Eventi nei file MIDI}
+
+I \textbf{meta-eventi} sono usati per inserire informazioni extra nel file, come testo o indicazioni di controllo.
+
+\subsection*{Esempi di Meta-Eventi}
+
+\begin{itemize}
+    \item \textbf{Copyright} → \texttt{FF 02 <length> <text>}
+    \item \textbf{Nome della traccia} → \texttt{FF 03 <length> <text>}
+    \item \textbf{Nome dello strumento} → \texttt{FF 04 <length> <text>}
+    \item \textbf{Testo della canzone} → \texttt{FF 05 <length> <text>}
+\end{itemize}
+
+\textbf{Importante:} Una traccia deve sempre terminare con il meta-evento di \textbf{Fine del Brano}:
+
+\begin{verbatim}
+FF 2F 00
+\end{verbatim}
